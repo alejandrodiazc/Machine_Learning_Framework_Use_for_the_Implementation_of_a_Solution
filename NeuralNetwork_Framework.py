@@ -5,6 +5,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.model_selection import GridSearchCV
 import warnings
 warnings.filterwarnings("ignore")
+from sklearn.metrics import accuracy_score
 
 df=pd.read_csv("penguins_size.csv")
 
@@ -13,7 +14,6 @@ df=df[df['sex'] != "."]
 
 X=df.drop("species",axis=1)
 y=pd.DataFrame(df["species"])
-
 from sklearn import preprocessing
 le = preprocessing.LabelEncoder()
 le.fit(X.island.unique().tolist())
@@ -38,9 +38,12 @@ model_gs=GridSearchCV(estimator=MLPClassifier(),param_grid=grid,refit=True,verbo
 model_gs.fit(X_train,y_train)
 
 print("Best parameters: ",model_gs.best_params_)
-print("Training score: ",model_gs.score(X_train,y_train))
-print("Testing score: ",model_gs.score(X_test,y_test))
+print("Accuracy score for training data: ",model_gs.score(X_train,y_train))
+#print("Testing accuracy score: ",model_gs.score(X_test,y_test))
 
 y_pred=model_gs.predict(X_test)
 for i in range(len(y_pred)):
     print("Real:",y_test["species"].tolist()[i], "| Predicted:",y_pred[i])
+    
+acc=accuracy_score(y_test,y_pred)
+print("Accuracy score for predictions:",acc)
